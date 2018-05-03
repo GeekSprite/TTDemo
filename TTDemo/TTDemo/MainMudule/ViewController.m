@@ -38,9 +38,9 @@
         NSAttributedString *contentAttString = [[TTLinkParser sharedParser] parsedLinkAttributedStringWithContent:content];
         dispatch_async(dispatch_get_main_queue(), ^{
             self.textView.attributedText = contentAttString;
-            self.textView.bounds = CGRectMake(0, 0, 200, 0);
+            self.textView.bounds = CGRectMake(0, 0, CGRectGetWidth(self.view.bounds) - 30, 0);
             [self.textView sizeToFit];
-            self.textView.frame = CGRectMake(50, 80, CGRectGetWidth(self.textView.frame), CGRectGetHeight(self.textView.frame));
+            self.textView.frame = CGRectMake(15, 80, CGRectGetWidth(self.textView.frame), CGRectGetHeight(self.textView.frame));
         });
     });
 }

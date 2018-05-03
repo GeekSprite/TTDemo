@@ -24,7 +24,6 @@
         self.delegate = self;
         self.editable = NO;
         self.scrollEnabled = NO;
-        self.textContainerInset = UIEdgeInsetsZero;
         self.linkTextAttributes = @{NSUnderlineStyleAttributeName: @(NSUnderlineStyleSingle)};
     }
     return self;
@@ -32,7 +31,7 @@
 
 #pragma mark - UITextViewDelegate
 
-- (BOOL)textView:(UITextView *)textView shouldInteractWithURL:(nonnull NSURL *)URL inRange:(NSRange)characterRange interaction:(UITextItemInteraction)interaction {
+- (BOOL)textView:(UITextView *)textView shouldInteractWithURL:(NSURL *)URL inRange:(NSRange)characterRange {
     [TTSimpleRouter openURL:URL];
     return NO;
 }

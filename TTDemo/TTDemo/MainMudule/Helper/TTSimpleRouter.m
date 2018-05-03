@@ -12,6 +12,8 @@
 
 @implementation TTSimpleRouter
 
+#pragma mark - Public Method
+
 + (void)openURL:(NSURL *)url {
     //可以判断是使用webview还是使用Native
     NSString *scheme = url.scheme;
@@ -32,13 +34,17 @@
     }
 }
 
+#pragma mark - OpenGage
+
 + (void)openFeedbackPageWithParams:(NSDictionary *)params {
     //这里可以解析参数传给VC，这里简单忽略掉
     TTFeedbackViewController *feedbackVC = [[TTFeedbackViewController alloc] init];
-    UINavigationController *navc = (UINavigationController *)[UIApplication sharedApplication].keyWindow.rootViewController;
-    [navc pushViewController:feedbackVC animated:YES];
+    [self showViewController:feedbackVC];
 }
 
+#pragma mark - Helper
+
+//用于解析参数
 + (NSDictionary *)paramsWithQuery:(NSString *)query {
     NSMutableDictionary *parametersDict = [NSMutableDictionary dictionary];
     NSArray *querysArray = [query componentsSeparatedByString:@"&"];
@@ -47,6 +53,48 @@
         parametersDict[componentsArray.firstObject] = componentsArray.lastObject;
     }];
     return parametersDict.copy;
+}
+
++ (UIViewController *)topViewController {
+    UIViewController *rootVC = [UIApplication sharedApplication].keyWindow.rootViewController;
+    
+    while (true) {
+        if (rootVC.childViewControllers.lastObject) {
+            rootVC = rootVC.childViewControllers.lastObject;
+            continue;
+        }
+        
+        if ([rootVC isKindOfClass:[UINavigationController class]]) {
+            rootVC = ((UINavigationController *)rootVC).viewControllers.lastObject;
+            continue;
+        }
+        
+        if ([rootVC isKindOfClass:[UITabBarController class]]) {
+            rootVC = ((UITabBarController *)rootVC).selectedViewController;
+            continue;
+        }
+        
+        if (rootVC.presentedViewController) {
+            rootVC = rootVC.presentedViewController;
+            continue;
+        }
+        
+        break;
+    }
+    
+    return rootVC;
+}
+
++ (void)showViewController:(UIViewController *)vc {
+    UIViewController *topVC = [self topViewController];
+    
+    if ([topVC isKindOfClass:[UINavigationController class]]) {
+        [(UINavigationController *)topVC pushViewController:vc animated:YES];
+    }else if(topVC.navigationController) {
+        [topVC.navigationController pushViewController:vc animated:YES];
+    }else {
+        [topVC presentViewController:vc animated:YES completion:nil];
+    }
 }
 
 @end

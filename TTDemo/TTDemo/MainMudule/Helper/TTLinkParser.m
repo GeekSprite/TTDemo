@@ -33,6 +33,25 @@ static NSString *const kLinkRegexPattern = @"\"\\S*\"";
     return sharedParser;
 }
 
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        _fullRegexPattern = [[NSRegularExpression alloc] initWithPattern:kFullRegexPattern
+                                                                 options:NSRegularExpressionCaseInsensitive
+                                                                   error:nil];
+        
+        _contentRegexPattern = [[NSRegularExpression alloc] initWithPattern:kContentRegexPattern
+                                                                    options:NSRegularExpressionCaseInsensitive
+                                                                      error:nil];
+        
+        _linkRegexPattern = [[NSRegularExpression alloc] initWithPattern:kLinkRegexPattern
+                                                                 options:NSRegularExpressionCaseInsensitive
+                                                                   error:nil];
+    }
+    return self;
+}
+
 #pragma mark - Public Method
 
 - (NSAttributedString *)parsedLinkAttributedStringWithContent:(NSString *)content {
@@ -59,7 +78,6 @@ static NSString *const kLinkRegexPattern = @"\"\\S*\"";
         //得到需要处理部分的内容<a herf="tantanapp://feedback">反馈</a>
         NSString *toParseString = [content substringWithRange:fullRange];
         
-        NSAttributedString *contentAtt = nil;
         //得到内容的边界 >反馈<
         NSRange contentRange = [self.contentRegexPattern rangeOfFirstMatchInString:toParseString
                                                                            options:NSMatchingReportProgress
@@ -72,19 +90,18 @@ static NSString *const kLinkRegexPattern = @"\"\\S*\"";
             contentString = toParseString;
         }
         
+        NSMutableAttributedString *contentAtt = [[NSMutableAttributedString alloc] initWithString:contentString];
+        
         //得到链接的边界"tantanapp://feedback"
         NSRange linkRange = [self.linkRegexPattern rangeOfFirstMatchInString:toParseString
                                                                      options:NSMatchingReportProgress
                                                                        range:NSMakeRange(0, toParseString.length)];
-        NSURL *linkUrl = nil;
         //链接存在的判断
         if (NSMaxRange(linkRange) < toParseString.length && linkRange.length > 2) {
             NSString *linkString = [toParseString substringWithRange:NSMakeRange(linkRange.location + 1, linkRange.length - 2)];
-            linkUrl = [NSURL URLWithString:linkString];
-            if (linkUrl) {
-                contentAtt = [[NSAttributedString alloc] initWithString:contentString
-                                                             attributes:@{NSLinkAttributeName : linkUrl}];                
-            }
+            [contentAtt addAttribute:NSLinkAttributeName
+                               value:[NSURL URLWithString:linkString]
+                               range:NSMakeRange(0, contentAtt.length)];
         }
         
         if (contentAtt) {
@@ -102,34 +119,6 @@ static NSString *const kLinkRegexPattern = @"\"\\S*\"";
     return attibuteContent.copy;
 }
 
-
 #pragma mark - Getter & Setter
-
-- (NSRegularExpression *)fullRegexPattern {
-    if (!_fullRegexPattern) {
-        _fullRegexPattern = [[NSRegularExpression alloc] initWithPattern:kFullRegexPattern
-                                                                 options:NSRegularExpressionCaseInsensitive
-                                                                   error:nil];
-    }
-    return _fullRegexPattern;
-}
-
-- (NSRegularExpression *)contentRegexPattern {
-    if (!_contentRegexPattern) {
-        _contentRegexPattern = [[NSRegularExpression alloc] initWithPattern:kContentRegexPattern
-                                                                    options:NSRegularExpressionCaseInsensitive
-                                                                      error:nil];
-    }
-    return _contentRegexPattern;
-}
-
-- (NSRegularExpression *)linkRegexPattern {
-    if (!_linkRegexPattern) {
-        _linkRegexPattern = [[NSRegularExpression alloc] initWithPattern:kLinkRegexPattern
-                                                                 options:NSRegularExpressionCaseInsensitive
-                                                                   error:nil];
-    }
-    return _linkRegexPattern;
-}
 
 @end

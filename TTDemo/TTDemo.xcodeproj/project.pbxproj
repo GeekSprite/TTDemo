@@ -87,7 +87,6 @@
 			children = (
 				3B971363209A1C7C00FAED17 /* Helper */,
 				3B97135A2099A25600FAED17 /* Controller */,
-				3B97135B2099A25600FAED17 /* Model */,
 				3B97135C2099A25600FAED17 /* View */,
 				3B97135D2099A25600FAED17 /* ViewController.h */,
 				3B97135E2099A25600FAED17 /* ViewController.m */,
@@ -102,13 +101,6 @@
 				3B97136B209A2AF400FAED17 /* TTFeedbackViewController.m */,
 			);
 			path = Controller;
-			sourceTree = "<group>";
-		};
-		3B97135B2099A25600FAED17 /* Model */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Model;
 			sourceTree = "<group>";
 		};
 		3B97135C2099A25600FAED17 /* View */ = {
